@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json tsconfig.json ./
 
 # Install dependencies (including dev)
-RUN npm install
+RUN npm ci
 
 # Copy source
 COPY src ./src
@@ -23,10 +23,10 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Only copy package.json & lock for prod install
-COPY package*.json ./
+COPY --from=builder /app/package*.json ./
 
 # Install only production dependencies
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
 # Copy compiled JS from builder
 COPY --from=builder /app/dist ./dist
